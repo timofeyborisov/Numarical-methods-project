@@ -189,14 +189,13 @@ cubic_spline(double (*f)(double), double x, double x0, double xn, int n)
 }
 
 double
-max_deviation(double (*f)(double), int type, double x0, double xn, int n)
+max_deviation(double (*f)(double), int type, double x0, double xn, int points, int n)
 {
-    n *= coeff;
     double ans = 0;
-    double h = (xn - x0) / (n * coeff - 1);
+    double h = (xn - x0) / (points - 1);
     double y = 0;
-    for (int i = 0; i < n; ++i) {
-        double x = x0 + (i + 0.5) * h;
+    for (int i = 0; i < points; ++i) {
+        double x = x0 + i * h;
         switch (type) {
             case POLY: {
                 y = Lagrange_polynomial(f, x, x0, xn, n);
@@ -278,13 +277,31 @@ main(void)
     make_data_file("f2_spln_17.dat", f2, SPLN, 0, 2, 17);
     // for cubic splines
 
+    printf("---\n");
     printf("All data files were successfully created\n");
-    /*
-    double max_dev1 = max_deviation(f1, POLY, 0, 2, 1001);
-    double max_dev2 = max_deviation(f2, SPLN, 0, 2, 1001);
     
-    printf("Max deviation for f1 and Lagrange polynomial: %lf\n", max_dev1);
-    printf("Max deviation for f2 and cubic spline: %lf\n", max_dev2);
-    */
+    double max_dev3 = max_deviation(f1, POLY, 0, 2, 1001, 3);
+    double max_dev5 = max_deviation(f1, POLY, 0, 2, 1001, 5);
+    double max_dev9 = max_deviation(f1, POLY, 0, 2, 1001, 9);
+    double max_dev17 = max_deviation(f1, POLY, 0, 2, 1001, 17);
+
+    printf("---\n");
+    printf("Max deviation for f1 and Lagrange polynomial (n = 3): %lf\n", max_dev3);
+    printf("Max deviation for f1 and Lagrange polynomial (n = 5): %lf\n", max_dev5);
+    printf("Max deviation for f1 and Lagrange polynomial (n = 9): %lf\n", max_dev9);
+    printf("Max deviation for f1 and Lagrange polynomial (n = 17): %lf\n", max_dev17);
+
+    max_dev3 = max_deviation(f2, POLY, 0, 2, 1001, 3);
+    max_dev5 = max_deviation(f2, POLY, 0, 2, 1001, 5);
+    max_dev9 = max_deviation(f2, POLY, 0, 2, 1001, 9);
+    max_dev17 = max_deviation(f2, POLY, 0, 2, 1001, 17);
+
+    printf("---\n");
+    printf("Max deviation for f2 and cubic spline (n = 3): %lf\n", max_dev3);
+    printf("Max deviation for f2 and cubic spline (n = 5): %lf\n", max_dev5);
+    printf("Max deviation for f2 and cubic spline (n = 9): %lf\n", max_dev9);
+    printf("Max deviation for f2 and cubic spline (n = 17): %lf\n", max_dev17);
+
+    printf("---\n");
     return 0;
 }
