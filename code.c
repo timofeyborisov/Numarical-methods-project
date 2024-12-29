@@ -95,24 +95,6 @@ spline_val(Spline coeff, double x, double xi)
     2 * pow(x - xi, 2) + coeff.d / 6 * pow(x - xi, 3));
 }
 
-void
-get_coeff_abd(double (*f)(double), Spline *coeff_arr, double x0, double xn, int n)
-{
-    // f - the function for which the system solution is calculated
-    // x0 - left boundary of a set (segment)
-    // xn - right boundary of a set 
-    // n - number of dots (0..n - 1)
-
-    double h = (xn - x0) / (n - 1);
-    for (int i = 0; i < n - 1; ++i) {
-        double xi = x0 + i * h;
-        coeff_arr[i].a = f(xi);
-        coeff_arr[i].d = (coeff_arr[i + 1].c - coeff_arr[i].c) / h;
-        coeff_arr[i].b = h * coeff_arr[i + 1].c / 2 - pow(h, 2) * coeff_arr[i].d / 6 + 
-        (f(x0 + (i + 1) * h) - f(xi)) / h;
-    }
-}
-
 double
 fi(double (*f)(double), double xi, double h)
 {
@@ -120,36 +102,55 @@ fi(double (*f)(double), double xi, double h)
 }
 
 void
-run_method_c(double (*f)(double), Spline *coeff_arr, double x0, double xn, int n)
+run_method_c(double (*f)(double), Spline *coeff_arr, double x0, int n, double h)
 {
+    // n - number of n - number of segments
+    // h - step
 
     double *alpha = malloc(n * sizeof *alpha);
     double *beta = malloc(n * sizeof *beta);
+    double A = 1, C = 4, B = 1;
+    // A, B, C - const
 
     coeff_arr[0].c = 0;
-    coeff_arr[n - 1].c = 0;
+    coeff_arr[n].c = 0;
     
     alpha[1] = 0;
     beta[1] = 0;
     
-    double h = (xn - x0) / (n - 1);
-    for (int i = 1; i < n - 1; ++i) {
-        double x = x0 + i * h;
-        // xi
-        double A = 1, C = 4, B = 1;
+    for (int i = 1; i <= n - 1; ++i) {
+        double xi = x0 + i * h;
+        // i = 1 .. n - 1
         double denom = A * alpha[i] + C;
-        double F = fi(f, x, h);
+        double F = fi(f, xi, h);
 
         alpha[i + 1] = -B / denom;
-        beta[i + 1] = (F - A * beta[i - 1]) / denom;
+        beta[i + 1] = (F - A * beta[i]) / denom;
     }
 
-    for (int i = n - 2; i >= 0; --i) {
+    for (int i = n - 1; i >= 0; --i) {
         coeff_arr[i].c = alpha[i + 1] * coeff_arr[i + 1].c + beta[i + 1];
     }
 
     free(alpha);
     free(beta);
+}
+
+void
+get_coeff_abd(double (*f)(double), Spline *coeff_arr, double x0, int n, double h)
+{
+    // f - the function for which the system solution is calculated
+    // x0 - left boundary of a set (segment)
+    // xn - right boundary of a set 
+    // n - number of segments
+
+    for (int i = 1; i <= n; ++i) {
+        double xi = x0 + i * h;
+        coeff_arr[i].a = f(xi);
+        coeff_arr[i].d = (coeff_arr[i].c - coeff_arr[i - 1].c) / h;
+        coeff_arr[i].b = h * coeff_arr[i].c / 2 - pow(h, 2) * coeff_arr[i].d / 6 + 
+        (f(xi) - f(xi - h)) / h;
+    }
 }
 
 double
@@ -159,23 +160,26 @@ cubic_spline(double (*f)(double), double x, double x0, double xn, int n)
     // x - the value of the cubic spline Si(x) at point x
     // x0 - left boundary of a set (segment)
     // xn - right boundary of a set 
-    // n - number of interpolation nodes (0..n - 1)
+    // n - number of splines (segments)
 
-    Spline *coeff_arr = malloc((n - 1) * sizeof *coeff_arr);
-    run_method_c(f, coeff_arr, x0, xn, n);
+    Spline *coeff_arr = malloc((n + 1) * sizeof *coeff_arr);
+    // coeff_arr[i] - i-coefficients of Si
+
+    double h = (xn - x0) / n;
+    // step
+    run_method_c(f, coeff_arr, x0, n, h);
     // calculating c
-
-    get_coeff_abd(f, coeff_arr, x0, xn, n);
-    // calculating a, b and d usinc c
+    get_coeff_abd(f, coeff_arr, x0, n, h);
+    // calculating a, b and d using c
     
     double ans = 0;
-
-    double h = (xn - x0) / (n - 1);
-    for (int i = 0; i < n - 1; ++i) {
-        double l = x0 + i * h;
-        double r = x0 + (i + 1) * h;
+    for (int i = 1; i <= n; ++i) {
+        double l = x0 + (i - 1) * h;
+        // xi - 1
+        double r = x0 + i * h;
+        // xi
         if (l <= x && x <= r) {
-            ans = spline_val(coeff_arr[i + 1], x, r);
+            ans = spline_val(coeff_arr[i], x, r);
             break;
         }
     }
@@ -199,7 +203,7 @@ max_deviation(double (*f)(double), int type, double x0, double xn, int n)
                 break;
             }
             case SPLN: {
-                y = cubic_spline(f, x, x0, xn, n);
+                y = cubic_spline(f, x, x0, xn, n - 1);
                 break;
             }
         }
@@ -237,7 +241,7 @@ make_data_file(char *filename, double (*f)(double), int type, double x0, double 
                 break;
             }
             case SPLN: {
-                y = cubic_spline(f, x, x0, xn, n);
+                y = cubic_spline(f, x, x0, xn, n - 1);
                 break;
             }
             default:
