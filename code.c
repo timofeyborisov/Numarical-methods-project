@@ -269,7 +269,13 @@ main(void)
     make_data_file("f1_poly_5.dat", f1, POLY, 0, 2, 5);
     make_data_file("f1_poly_9.dat", f1, POLY, 0, 2, 9);
     make_data_file("f1_poly_17.dat", f1, POLY, 0, 2, 17);
-    // for Lagrange polynomials
+    // for Lagrange polynomials (for f1)
+
+    make_data_file("f2_poly_3.dat", f2, POLY, 0, 2, 3);
+    make_data_file("f2_poly_5.dat", f2, POLY, 0, 2, 5);
+    make_data_file("f2_poly_9.dat", f2, POLY, 0, 2, 9);
+    make_data_file("f2_poly_17.dat", f2, POLY, 0, 2, 17);
+    // for Lagrange polynomials (for f2)
     
     make_data_file("f2_spln_3.dat", f2, SPLN, 0, 2, 3);
     make_data_file("f2_spln_5.dat", f2, SPLN, 0, 2, 5);
