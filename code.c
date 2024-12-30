@@ -46,7 +46,7 @@ double
 f2(double x)
 {
     // second data set
-    return sin(4 * x) * exp(2 * x);
+    return fabs(sin(4 * x)) * exp(2 * x);
 }
 
 double 
@@ -283,6 +283,8 @@ main(void)
     make_data_file("f2_spln_17.dat", f2, SPLN, 0, 2, 17);
     // for cubic splines
 
+    make_data_file("f2_poly_17.dat", f2, POLY, 0, 2, 17);
+
     printf("---\n");
     printf("All data files were successfully created\n");
     
@@ -297,10 +299,10 @@ main(void)
     printf("Max deviation for f1 and Lagrange polynomial (n = 9): %lf\n", max_dev9);
     printf("Max deviation for f1 and Lagrange polynomial (n = 17): %lf\n", max_dev17);
 
-    max_dev3 = max_deviation(f2, POLY, 0, 2, 1001, 3);
-    max_dev5 = max_deviation(f2, POLY, 0, 2, 1001, 5);
-    max_dev9 = max_deviation(f2, POLY, 0, 2, 1001, 9);
-    max_dev17 = max_deviation(f2, POLY, 0, 2, 1001, 17);
+    max_dev3 = max_deviation(f2, SPLN, 0, 2, 1001, 3);
+    max_dev5 = max_deviation(f2, SPLN, 0, 2, 1001, 5);
+    max_dev9 = max_deviation(f2, SPLN, 0, 2, 1001, 9);
+    max_dev17 = max_deviation(f2, SPLN, 0, 2, 1001, 17);
 
     printf("---\n");
     printf("Max deviation for f2 and cubic spline (n = 3): %lf\n", max_dev3);

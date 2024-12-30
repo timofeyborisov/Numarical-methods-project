@@ -13,6 +13,7 @@
 \usepackage{titlesec}
 \usepackage{tocbibind}
 \usepackage{xcolor}
+\usepackage{subcaption}
 
 \geometry{top=2cm, bottom=2cm, left=2.5cm, right=2.5cm}
 
@@ -204,14 +205,187 @@ a_i = f_i, \quad i = 1, \dots, n.
     \item \textbf{Создание файлов:} после всех вычислений функций, а также их интерполянтов, создается текстовый файл (формат \texttt{.dat}) в который записывается множество точек для каждой функции. После этого происходит визуализация получившихся данных в gnuplot (в папке graphs сохранены графики функций).
     \item \textbf{Печать максимальных отклонений интерполянтов:} в последнюю очередь, после создания файлов, печатаются значения максимальных отклонений интерполянтов от самих функций. Программа сравнивает их значения на сетке из 1001 узлов и сохраняет результат, после чего печатает. Сначала идет печать четырех значений для первой функции, затем четырех значений для второй.
 \end{itemize}
+\section*{Результаты вычислений}
+Как уже было сказано ранее, программа создает несколько текстовых файлов с наборами данных для каждоый функции и её интерполянта (для первой функции - полиномы Лагранжа, для второй - данные, полученые для сплайнов). Результаты работы программы находятся в репозитории. Названия файлов имеюи следующий вид: \(\texttt{fi\_type\_n}\), где \(i\) - номер функции, \(\texttt{type}\) - тип интерполянта (\(\texttt{poly}\) - полином Лагранжа, \(\texttt{spln}\) - кубический сплайн), \(\texttt{n}\) - количество узлов сетки, для которой строится интерполяция (сетка равномерная). Файлы \(\texttt{f1.dat}\) и \(\texttt{f2.dat}\) - файлы, имеющие наборы данных для исходных функций, для которых решается задача интерполяции. 
+Для первой функции применение полинома Лагранжа дает не очень корректный результат: возле краев отрезка приближение было неточным, были большие колебания
 
-\section*{Результаты}
+\clearpage
+
+\begin{table}[h!]
+\centering
+\begin{subtable}{0.45\textwidth}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+X & Y \\ \hline
+0.000000 & 0.000000 \\ \hline
+0.100000 & -8.168750 \\ \hline
+0.200000 & -14.500000 \\ \hline
+0.300000 & -18.993750 \\ \hline
+0.400000 & -21.650000 \\ \hline
+0.500000 & -22.468750 \\ \hline
+0.600000 & -21.450000 \\ \hline
+0.700000 & -18.593750 \\ \hline
+0.800000 & -13.900000 \\ \hline
+0.900000 & -7.368750 \\ \hline 
+1.000000 & 1.000000 \\ \hline
+1.100000 & 11.206250 \\ \hline
+1.200000 & 23.250000 \\ \hline
+1.300000 & 37.131250 \\ \hline
+1.400000 & 52.850000 \\ \hline
+1.500000 & 70.406250 \\ \hline
+1.600000 & 89.800000 \\ \hline
+1.700000 & 111.031250 \\ \hline
+1.800000 & 134.100000 \\ \hline
+1.900000 & 159.006250 \\ \hline
+2.000000 & 185.750000 \\ \hline
+\end{tabular}
+\caption{\texttt{f1\_poly\_3.dat}}
+\label{tab:table1}
+\end{subtable}%
+\hspace{0.01\textwidth} % Пробел между таблицами
+\begin{subtable}{0.45\textwidth}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+X & Y \\ \hline
+0.000000 & 0.000000 \\ \hline
+0.100000 & 0.178829 \\ \hline
+0.200000 & 0.307520 \\ \hline
+0.300000 & 0.345386 \\ \hline 
+0.400000 & 0.270640 \\ \hline
+0.500000 & 0.089844 \\ \hline
+0.600000 & -0.152640 \\ \hline
+0.700000 & -0.365199 \\ \hline
+0.800000 & -0.399520 \\ \hline
+0.900000 & -0.041141 \\ \hline
+1.000000 & 1.000000 \\ \hline
+1.100000 & 3.099016 \\ \hline
+1.200000 & 6.725520 \\ \hline
+1.300000 & 12.453074 \\ \hline
+1.400000 & 20.968640 \\ \hline
+1.500000 & 33.082031 \\ \hline
+1.600000 & 49.735360 \\ \hline
+1.700000 & 72.012489 \\ \hline
+1.800000 & 101.148480 \\ \hline
+1.900000 & 138.539046 \\ \hline
+2.000000 & 185.750000 \\ \hline
+\end{tabular}
+\caption{\texttt{f1\_poly\_17.dat}}
+\label{tab:table2}
+\end{subtable}
+\vspace{10pt}
+\caption{Примеры данных для двух файлов в виде таблицы (полином Лагранжа)}
+\label{tab:both_tables}
+\end{table}
+
+\vspace{10pt}
+
+\noindent \textbf{Пример вывода программы (n = 101):}
+
+\vspace{10pt}
+
+\begin{verbatim}
+Enter number of dots for graphs: 101
+---
+All data files were successfully created
+---
+Max deviation for f1 and Lagrange polynomial (n = 3): 40.204123
+Max deviation for f1 and Lagrange polynomial (n = 5): 0.893672
+Max deviation for f1 and Lagrange polynomial (n = 9): 0.000000
+Max deviation for f1 and Lagrange polynomial (n = 17): 0.000000
+---
+Max deviation for f2 and cubic spline (n = 3): 29.435939
+Max deviation for f2 and cubic spline (n = 5): 9.883389
+Max deviation for f2 and cubic spline (n = 9): 7.335909
+Max deviation for f2 and cubic spline (n = 17): 3.740584
+---
+\end{verbatim}
+
+
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f1_3.png}
+        \caption{Lagrange polynomial (n = 3)}
+    \end{minipage}%
+\end{figure*}
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f1_5.png}
+        \caption{Lagrange polynomial (n = 5)}
+    \end{minipage}%
+\end{figure*}
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f1_9.png}
+        \caption{Lagrange polynomial (n = 9)}
+    \end{minipage}%
+\end{figure*}
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f1_17.png}
+        \caption{Lagrange polynomial (n = 17)}
+    \end{minipage}%
+\end{figure*}
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f2_3.png}
+        \caption{Cubic spline (n = 3)}
+    \end{minipage}%
+\end{figure*}
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f2_5.png}
+        \caption{Cubic spline (n = 5)}
+    \end{minipage}%
+\end{figure*}
+\clearpage
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f2_9.png}
+        \caption{Cubic spline (n = 9)}
+    \end{minipage}%
+\end{figure*}
+
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f2_17.png}
+        \caption{Cubic spline (n = 17)}
+    \end{minipage}%
+\end{figure*}
+
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{graph/f2_poly_17.png}
+        \caption{Проблемы с интерполированием полиномом Лагранжа на первом наборе данных}
+    \end{minipage}%
+\end{figure*}
+
+\section*{Итоги}
 
 \begin{enumerate}
     \item \textbf{Функция \(f_1\)}, интерполянт Лагранжа:
     \begin{itemize}
         \item При 3--5 узлах результат более-менее точный, ошибка невелика.
-        \item При 17 узлах результат становится еще более точным. Однако, вообще говоря, при разных границах отрезка возникает всё же риск эффекта Рунге на краях; однако если взять узлы «равномерно», может понадобиться сгущение на концах отрезка. В нашем случае, полином Лагранжа всё равно дает точное приближение
+        \item При 17 узлах результат становится еще более точным. Однако, вообще говоря, при разных границах отрезка возникает всё же риск эффекта Рунге на краях; однако если взять узлы «равномерно», может понадобиться сгущение на концах отрезка. На втором наборе данных заметно сильное отклонение.
     \end{itemize}
     \item \textbf{Функция \(f_2\)}, кубический сплайн:
     \begin{itemize}
